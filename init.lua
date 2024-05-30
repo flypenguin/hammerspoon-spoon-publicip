@@ -19,7 +19,7 @@
 --- ```
 --- hs.loadSpoon("PublicIP")
 --- spoon.PublicIP.terse = true
---- spoon.PublicIP.refreshIP()
+--- spoon.PublicIP.refresh()
 --- ```
 ---
 --- where 'spoon.PublicIP.terse' is optional in case you want to change to short layout
@@ -28,7 +28,7 @@
 --- ```
 --- function networkChangedCallback(store, keys)
 ---     hs.timer.doAfter(10, function()
----     spoon.PublicIP.refreshIP()
+---     spoon.PublicIP.refresh()
 ---   end)
 --- end
 ---
@@ -60,10 +60,10 @@ obj.publicIPGeolocationService = "http://ip-api.com/json/"
 --- Defauts to false
 obj.terse = false
 
---- Callback function for menu items to call refreshIP method
+--- Callback function for menu items to call refresh method
 --- Callback
 function callRefresh(modifiers, payload)
-  obj:refreshIP()
+  obj:refresh()
 end
 
 
@@ -99,7 +99,7 @@ function getGeoIPData()
     decodedJSON['errMsg'] = "Throttled. Retrying..."
 
     hs.timer.doAfter(30, function()
-     obj:refreshIP()
+     obj:refresh()
     end)
 
   end
@@ -111,10 +111,10 @@ function getGeoIPData()
 end
 
 
---- PublicIP:refreshIP()
+--- PublicIP:refresh()
 --- Method
 --- Refreshes IP information and redraws menubar widget
-function obj:refreshIP()
+function obj:refresh()
   obj.public_ip_menu:setTitle("Refreshing...")
 
   local geoIPData = getGeoIPData()

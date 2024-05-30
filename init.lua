@@ -3,18 +3,18 @@
 --- Simple spoon for fetching your current public IP address and geolocation and displaying it in menubar.
 --- Menubar is displaying IP, ISP and country. Useful if you are switching between VPNs
 --- at regular basis or are just interested in your current ISP on public WIFI. Can be manually
---- refreshed by clicking on menubar widget or can be auto-refreshed each time network IP4 is 
+--- refreshed by clicking on menubar widget or can be auto-refreshed each time network IP4 is
 --- changed.
 ---
 --- Supports 2 modes of output - terse and normal. If terse variable is set to true it will display
 --- short output with only current countryCode with further info available on click. Selecting any
 --- of the values from dropdown (in both terse and normal mode) will copy that value to clipboard.
---- 
---- This spoon uses free geolocation service provided by awesome ip-api.com. Big thanks to 
+---
+--- This spoon uses free geolocation service provided by awesome ip-api.com. Big thanks to
 --- them for making this possible. Please consider supporting them by subscribing to their PRO tier.
 --- Commercial use of ip-api.com service is prohibited without PRO service plan. Use at your own
 --- risk.
---- 
+---
 --- Example configuration:
 --- ```
 --- hs.loadSpoon("PublicIP")
@@ -31,13 +31,13 @@
 ---     spoon.PublicIP.refreshIP()
 ---   end)
 --- end
---- 
+---
 --- n = hs.network.configuration.open()
 --- n:monitorKeys("State:/Network/Service/.*/IPv4", true)
 --- n:setCallback(cb)
 --- n:start()
 --- ```
---- 
+---
 --- In case you want to watch both IPv4 and IPv6 you need to monitor keys for IPv4 and IPv6.
 ---
 --- Download: []()
@@ -75,7 +75,7 @@ end
 function getGeoIPData()
 
   local status, data, headers = hs.http.get(obj.publicIPGeolocationService)
-  
+
   local decodedJSON = {}
 
   if status == 200 then
@@ -90,20 +90,20 @@ function getGeoIPData()
     decodedJSON['errMsg'] = nil
 
   elseif status == 0 then
-    decodedJSON['err'] = "GeoIP service is not resolvable. Either there is no internet connection, DNS servers are not responding or GeoIP provider's DNS does not exist." 
+    decodedJSON['err'] = "GeoIP service is not resolvable. Either there is no internet connection, DNS servers are not responding or GeoIP provider's DNS does not exist."
     decodedJSON['errMsg'] = "No Internet"
   end
 
   if status == 429 then
     decodedJSON['err'] = "GeoIP requests are throttled, we are over 45 requests per minute from our IP. We will retry after 30 seconds. Consider subscribing to https://members.ip-api.com to support providers of geoip service)"
     decodedJSON['errMsg'] = "Throttled. Retrying..."
-    
+
     hs.timer.doAfter(30, function()
      obj:refreshIP()
     end)
 
   end
-  
+
   decodedJSON['httpStatus'] = status
   decodedJSON['rawData'] = data
 
@@ -122,11 +122,11 @@ function obj:refreshIP()
 
   local ISP = geoIPData.isp
   local country = geoIPData.country
-  local publicIP = geoIPData.query  
+  local publicIP = geoIPData.query
   local countryCode = geoIPData.countryCode
   local lat = geoIPData.lat
   local lon = geoIPData.lon
- 
+
   local errorMessage = geoIPData.errorMessage
   local fetchError = geoIPData.err
   local httpStatus = geoIPData.httpStatus
@@ -144,7 +144,7 @@ function obj:refreshIP()
           {title = "Refresh", fn = callRefresh}
         }
       )
-    else 
+    else
       obj.public_ip_menu:setTitle("🌍 " .. publicIP .. " 📇 " .. ISP .. " 📍 " .. country)
       obj.public_ip_menu:setMenu(
         {
